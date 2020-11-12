@@ -7,7 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1vqhtCEaUX3wdpK8kxw8IVBq2utJhekJX
 """
 
-!git clone https://github.com/Mayraju/datasets.git
+#git clone https://github.com/Mayraju/datasets.git
 
 import numpy as np
 import pandas as pd
@@ -38,10 +38,10 @@ class data_cls:
      self.index = 0
      self.loaded = False
      self.train_test = train_test
-     self.train_path = kwargs.get('train_path','/content/datasets/datasets/NSL/KDDTrain+.txt')
-     self.test_path = kwargs.get('test_path','/content/datasets/datasets/NSL/KDDTest+.txt')
-     self.formated_train_path = kwargs.get('formated_train_path',"/content/datasets/datasets/formated/formated_train_adv.data.txt")
-     self.formated_test_path = kwargs.get('formated_test_path',"/content/datasets/datasets/formated/formated_test_adv.data.txt")
+     self.train_path = kwargs.get('train_path','/content/NSL/KDDTrain+.txt')
+     self.test_path = kwargs.get('test_path','/content/NSL/KDDTest+.txt')
+     self.formated_train_path = kwargs.get('formated_train_path',"/content/formated/formated_train_adv.data.txt")
+     self.formated_test_path = kwargs.get('formated_test_path',"/content/formated/formated_test_adv.data.txt")
      self.attack_types = ['normal','Dos','Probe','R2L','U2R']
      self.attack_names = []
      self.attack_map = {'normal':'normal',
@@ -94,7 +94,7 @@ class data_cls:
      formated = False
      if os.path.exists(self.formated_train_path) and os.path.exists(self.formated_test_path):
        formated = True
-     self.formated_dir = "/content/datasets/datasets/formated"
+     self.formated_dir = "/content/formated"
      if not os.path.exists(self.formated_dir):
        os.makedirs(self.formated_dir)
     
@@ -637,12 +637,12 @@ class RLenv(data_cls):
 
 if __name__ == "__main__":
 
-  kdd_20_path = '/content/datasets/datasets/NSL/KDDTrain+_20Percent.txt'
-  kdd_train = '/content/datasets/datasets/NSL/KDDTrain+.txt'
-  kdd_test = '/content/datasets/datasets/NSL/KDDTest+.txt'
+  kdd_20_path = '/content/NSL/KDDTrain+_20Percent.txt'
+  kdd_train = '/content/NSL/KDDTrain+.txt'
+  kdd_test = '/content/NSL/KDDTest+.txt'
 
-  formated_train_path = "/content/datasets/datasets/formated/formated_train_adv.data.txt"
-  formated_test_path = "/content/datasets/datasets/formated/formated_test_adv.data.txt"
+  formated_train_path = "/content/formated/formated_train_adv.data.txt"
+  formated_test_path = "/content/formated/formated_test_adv.data.txt"
    
   batch_size = 1
 
@@ -847,8 +847,8 @@ if __name__ == "__main__":
               env.def_true_labels))
         
     # Save trained model weights and architecture, used in test
-  defender_agent.model_network.model.save_weights("/content/datasets/datasets/results/defender_agent_model.h5", overwrite=True)
-  with open("/content/datasets/datasets/results/defender_agent_model.json", "w") as outfile:
+  defender_agent.model_network.model.save_weights("/opt/dkube/output/results/defender_agent_model.h5", overwrite=True)
+  with open("/content/results/defender_agent_model.json", "w") as outfile:
     json.dump(defender_agent.model_network.model.to_json(), outfile)
         
         
@@ -873,7 +873,7 @@ if __name__ == "__main__":
            ncol=2, mode="expand", borderaxespad=0.)
   plt.tight_layout()
     #plt.show()
-  plt.savefig('/content/datasets/datasets/results/train_adv.eps', format='eps', dpi=1000)
+  plt.savefig('/opt/dkube/output/results/train_adv.eps', format='eps', dpi=1000)
 
 import json
 import numpy as np
@@ -935,11 +935,11 @@ def plot_confusion_matrix(cm, classes,
 
 
 batch_size = 10
-formated_test_path = "/content/datasets/datasets/formated/formated_test_adv.data.txt"
+formated_test_path = "/content/formated/formated_test_adv.data.txt"
 
-with open("/content/datasets/datasets/results/defender_agent_model.json", "r") as jfile:
+with open("/content/results/defender_agent_model.json", "r") as jfile:
     model = model_from_json(json.load(jfile))
-model.load_weights("/content/datasets/datasets/results/defender_agent_model.h5")
+model.load_weights("/opt/dkube/output/results/defender_agent_model.h5")
 #optimizer = optimizers.Adam(0.00001)
 model.compile(loss=huber_loss,optimizer='sgd')
 
@@ -1036,7 +1036,7 @@ ax.set_title('Test set scores, Acc = {:.2f}'.format(acc))
 plt.legend(('Correct estimated','False negative','False positive'))
 plt.tight_layout()
 #plt.show()
-plt.savefig('/content/datasets/datasets/test_adv_imp.svg', format='svg', dpi=1000)
+plt.savefig('/opt/dkube/output/results/test_adv_imp.svg', format='svg', dpi=1000)
 
 
 #%% Agregated precision
@@ -1055,4 +1055,5 @@ plt.figure()
 plt.figure()
 plot_confusion_matrix(cnf_matrix, classes=env.attack_types, normalize=True,
                       title='Normalized confusion matrix')
-plt.savefig('/content/datasets/datasets/confusion_matrix_adversarial.svg', format='svg', dpi=1000)
+plt.savefig('/opt/dkube/output/results/confusion_matrix_adversarial.svg', format='svg', dpi=1000)
+
