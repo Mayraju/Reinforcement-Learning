@@ -23,6 +23,9 @@ import sys
 import time
 
 NSL_path = "/content/NSL/"
+formated_path="/content/formated/"
+results1 = "/content/files/"
+
 
 #Data class processing
 class data_cls:
@@ -40,10 +43,10 @@ class data_cls:
      self.index = 0
      self.loaded = False
      self.train_test = train_test
-     self.train_path = kwargs.get('train_path','/content/NSL/KDDTrain+.txt')
-     self.test_path = kwargs.get('test_path','/content/NSL/KDDTest+.txt')
-     self.formated_train_path = kwargs.get('formated_train_path',"/content/formated/formated_train_adv.data.txt")
-     self.formated_test_path = kwargs.get('formated_test_path',"/content/formated/formated_test_adv.data.txt")
+     self.train_path = kwargs.get('train_path','NSL_path+KDDTrain+.txt')
+     self.test_path = kwargs.get('test_path','NSL_path+KDDTest+.txt')
+     self.formated_train_path = kwargs.get('formated_train_path',"formated_path+formated_train_adv.data.txt")
+     self.formated_test_path = kwargs.get('formated_test_path',"formated_path+formated_test_adv.data.txt")
      self.attack_types = ['normal','Dos','Probe','R2L','U2R']
      self.attack_names = []
      self.attack_map = {'normal':'normal',
@@ -96,7 +99,7 @@ class data_cls:
      formated = False
      if os.path.exists(self.formated_train_path) and os.path.exists(self.formated_test_path):
        formated = True
-     self.formated_dir = "/content/formated"
+     self.formated_dir = formated_path
      if not os.path.exists(self.formated_dir):
        os.makedirs(self.formated_dir)
     
@@ -223,17 +226,17 @@ class data_cls:
 def huber_loss(y_true,y_pred,clip_value=1):
 
    assert clip_value > 0
-   print("y_true value")
-   print(y_true)
-   print("y_pred value")
-   print(y_pred)
+   #print("y_true value")
+   #print(y_true)
+   #print("y_pred value")
+  # print(y_pred)
    x = y_true - y_pred
    if np.isinf(clip_value):
 
        return .5 * K.square(x)
 
-   print("K Value")
-   print(K)
+   #print("K Value")
+   #print(K)
    condition = K.abs(x) < clip_value
    squared_loss = .5 * K.square(x)
    linear_loss = clip_value * (K.abs(x) - .5 * clip_value)
@@ -639,12 +642,12 @@ class RLenv(data_cls):
 
 if __name__ == "__main__":
 
-  kdd_20_path = '/content/NSL/KDDTrain+_20Percent.txt'
-  kdd_train = '/content/NSL/KDDTrain+.txt'
-  kdd_test = '/content/NSL/KDDTest+.txt'
+  kdd_20_path = 'NSL_path+KDDTrain+_20Percent.txt'
+  kdd_train = 'NSL_path+KDDTrain+.txt'
+  kdd_test = 'NSL_path+KDDTest+.txt'
 
-  formated_train_path = "/content/formated/formated_train_adv.data.txt"
-  formated_test_path = "/content/formated/formated_test_adv.data.txt"
+  formated_train_path = "formated_path+formated_train_adv.data.txt"
+  formated_test_path = "formated_path+formated_test_adv.data.txt"
    
   batch_size = 1
 
@@ -849,8 +852,8 @@ if __name__ == "__main__":
               env.def_true_labels))
         
     # Save trained model weights and architecture, used in test
-  defender_agent.model_network.model.save_weights("/opt/dkube/output/results/defender_agent_model.h5", overwrite=True)
-  with open("/content/results/defender_agent_model.json", "w") as outfile:
+  defender_agent.model_network.model.save_weights("results1+defender_agent_model.h5", overwrite=True)
+  with open("results1+defender_agent_model.json", "w") as outfile:
     json.dump(defender_agent.model_network.model.to_json(), outfile)
         
         
@@ -875,7 +878,7 @@ if __name__ == "__main__":
            ncol=2, mode="expand", borderaxespad=0.)
   plt.tight_layout()
     #plt.show()
-  plt.savefig('/opt/dkube/output/results/train_adv.eps', format='eps', dpi=1000)
+  plt.savefig('results1+train_adv.eps', format='eps', dpi=1000)
 
 import json
 import numpy as np
@@ -937,11 +940,11 @@ def plot_confusion_matrix(cm, classes,
 
 
 batch_size = 10
-formated_test_path = "/content/formated/formated_test_adv.data.txt"
+formated_test_path = "formatd_path+formated_test_adv.data.txt"
 
-with open("/content/results/defender_agent_model.json", "r") as jfile:
+with open("results1+defender_agent_model.json", "r") as jfile:
     model = model_from_json(json.load(jfile))
-model.load_weights("/opt/dkube/output/results/defender_agent_model.h5")
+model.load_weights("results1+defender_agent_model.h5")
 #optimizer = optimizers.Adam(0.00001)
 model.compile(loss=huber_loss,optimizer='sgd')
 
@@ -1038,7 +1041,7 @@ ax.set_title('Test set scores, Acc = {:.2f}'.format(acc))
 plt.legend(('Correct estimated','False negative','False positive'))
 plt.tight_layout()
 #plt.show()
-plt.savefig('/opt/dkube/output/results/test_adv_imp.svg', format='svg', dpi=1000)
+plt.savefig('results1+test_adv_imp.svg', format='svg', dpi=1000)
 
 
 #%% Agregated precision
@@ -1057,5 +1060,5 @@ plt.figure()
 plt.figure()
 plot_confusion_matrix(cnf_matrix, classes=env.attack_types, normalize=True,
                       title='Normalized confusion matrix')
-plt.savefig('/opt/dkube/output/results/confusion_matrix_adversarial.svg', format='svg', dpi=1000)
+plt.savefig('results1+confusion_matrix_adversarial.svg', format='svg', dpi=1000)
 
