@@ -24,7 +24,7 @@ import time
 
 NSL_path = "/content/NSL/"
 formated_path="/content/formated/"
-results1 = "/model/files/"
+results = "/model/files/"
 
 
 #Data class processing
@@ -43,10 +43,10 @@ class data_cls:
      self.index = 0
      self.loaded = False
      self.train_test = train_test
-     self.train_path = kwargs.get('train_path','NSL_path+KDDTrain+.txt')
-     self.test_path = kwargs.get('test_path','NSL_path+KDDTest+.txt')
-     self.formated_train_path = kwargs.get('formated_train_path',"formated_path+formated_train_adv.data.txt")
-     self.formated_test_path = kwargs.get('formated_test_path',"formated_path+formated_test_adv.data.txt")
+     self.train_path = kwargs.get('train_path', NSL_path + 'KDDTrain+.txt')
+     self.test_path = kwargs.get('test_path',NSL_path + 'KDDTest+.txt')
+     self.formated_train_path = kwargs.get('formated_train_path', formated_path + "formated_train_adv.data.txt")
+     self.formated_test_path = kwargs.get('formated_test_path', formated_path + "formated_test_adv.data.txt")
      self.attack_types = ['normal','Dos','Probe','R2L','U2R']
      self.attack_names = []
      self.attack_map = {'normal':'normal',
@@ -642,12 +642,12 @@ class RLenv(data_cls):
 
 if __name__ == "__main__":
 
-  kdd_20_path = 'NSL_path+KDDTrain+_20Percent.txt'
-  kdd_train = 'NSL_path+KDDTrain+.txt'
-  kdd_test = 'NSL_path+KDDTest+.txt'
+  kdd_20_path = NSL_path + 'KDDTrain+_20Percent.txt'
+  kdd_train = NSL_path + 'KDDTrain+.txt'
+  kdd_test = NSL_path + 'KDDTest+.txt'
 
-  formated_train_path = "formated_path+formated_train_adv.data.txt"
-  formated_test_path = "formated_path+formated_test_adv.data.txt"
+  formated_train_path = formated_path + "formated_train_adv.data.txt"
+  formated_test_path = formated_path + "formated_test_adv.data.txt"
    
   batch_size = 1
 
@@ -852,8 +852,8 @@ if __name__ == "__main__":
               env.def_true_labels))
         
     # Save trained model weights and architecture, used in test
-  defender_agent.model_network.model.save_weights("results1+defender_agent_model.h5", overwrite=True)
-  with open("results1+defender_agent_model.json", "w") as outfile:
+  defender_agent.model_network.model.save_weights(results + "defender_agent_model.h5", overwrite=True)
+  with open(results + "defender_agent_model.json", "w") as outfile:
     json.dump(defender_agent.model_network.model.to_json(), outfile)
         
         
@@ -878,7 +878,7 @@ if __name__ == "__main__":
            ncol=2, mode="expand", borderaxespad=0.)
   plt.tight_layout()
     #plt.show()
-  plt.savefig('results1+train_adv.eps', format='eps', dpi=1000)
+  plt.savefig(results + 'train_adv.eps', format='eps', dpi=1000)
 
 import json
 import numpy as np
@@ -942,9 +942,9 @@ def plot_confusion_matrix(cm, classes,
 batch_size = 10
 formated_test_path = "formatd_path+formated_test_adv.data.txt"
 
-with open("results1+defender_agent_model.json", "r") as jfile:
+with open(results + "defender_agent_model.json", "r") as jfile:
     model = model_from_json(json.load(jfile))
-model.load_weights("results1+defender_agent_model.h5")
+model.load_weights( results +"defender_agent_model.h5")
 #optimizer = optimizers.Adam(0.00001)
 model.compile(loss=huber_loss,optimizer='sgd')
 
@@ -1041,7 +1041,7 @@ ax.set_title('Test set scores, Acc = {:.2f}'.format(acc))
 plt.legend(('Correct estimated','False negative','False positive'))
 plt.tight_layout()
 #plt.show()
-plt.savefig('results1+test_adv_imp.svg', format='svg', dpi=1000)
+plt.savefig(results + 'test_adv_imp.svg', format='svg', dpi=1000)
 
 
 #%% Agregated precision
@@ -1060,5 +1060,5 @@ plt.figure()
 plt.figure()
 plot_confusion_matrix(cnf_matrix, classes=env.attack_types, normalize=True,
                       title='Normalized confusion matrix')
-plt.savefig('results1+confusion_matrix_adversarial.svg', format='svg', dpi=1000)
+plt.savefig(results + 'confusion_matrix_adversarial.svg', format='svg', dpi=1000)
 
