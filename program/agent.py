@@ -24,7 +24,7 @@ import time
 
 NSL_path = "/content/NSL/"
 formated_path="/content/formated/"
-results1 = "/content/files/"
+results1 = "/model/files/"
 
 
 #Data class processing
