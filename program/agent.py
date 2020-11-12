@@ -25,7 +25,7 @@ import time
 NSL_path = "/content/NSL/"
 formated_path="/content/formated/"
 results = "/model/files/"
-temp_model = "temp_model_" + str(random.randint(300,900))
+temp_model = "tmp_model_" + str(random.randint(300,900))
 
 
 #Data class processing
@@ -294,8 +294,8 @@ class QNetwork():
     
   def copy_model(model):
 
-     model.save('tmp_model')
-     return keras.models.load_model('tmp_model')
+     model.save(temp_model)
+     return keras.models.load_model(temp_model)
 
 class Policy:
   def __init__(self,num_actions,estimator):
