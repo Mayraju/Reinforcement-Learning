@@ -25,6 +25,7 @@ import time
 NSL_path = "/content/NSL/"
 formated_path="/content/formated/"
 results = "/model/files/"
+temp_model = "temp_model_" + str(random.randint(300,900))
 
 
 #Data class processing
@@ -940,7 +941,7 @@ def plot_confusion_matrix(cm, classes,
 
 
 batch_size = 10
-formated_test_path = "formatd_path+formated_test_adv.data.txt"
+formated_test_path = formatd_path + "formated_test_adv.data.txt"
 
 with open(results + "defender_agent_model.json", "r") as jfile:
     model = model_from_json(json.load(jfile))
