@@ -22,6 +22,8 @@ import os
 import sys
 import time
 
+NSL_path = "/content/NSL/"
+
 #Data class processing
 class data_cls:
   def __init__(self,train_test,**kwargs):
